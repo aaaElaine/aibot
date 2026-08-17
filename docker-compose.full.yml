@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: support-bot-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-support_bot}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./chat-bot/init-db:/docker-entrypoint-initdb.d
+    networks:
+      - support-bot-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 后端服务
+  backend:
+    build:
+      context: ./chat-bot
+      dockerfile: Dockerfile
+    container_name: support-bot-backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-support_bot}
+      DB_USERNAME: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+      DASHSCOPE_MODEL: ${DASHSCOPE_MODEL:-qwen-max}
+      DASHSCOPE_EMBEDDING_MODEL: ${DASHSCOPE_EMBEDDING_MODEL:-qwen3.7-text-embedding}
+      RAG_ENABLED: ${RAG_ENABLED:-true}
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - support-bot-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # H5前端（用户端）
+  h5-frontend:
+    build:
+      context: ./chat-bot-h5
+      dockerfile: Dockerfile
+    container_name: support-bot-h5
+    ports:
+      - "3000:80"
+    networks:
+      - support-bot-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # 管理后台
+  admin-frontend:
+    build:
+      context: ./chat-bot-admin
+      dockerfile: Dockerfile
+    container_name: support-bot-admin
+    ports:
+      - "3001:80"
+    networks:
+      - support-bot-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  support-bot-network:
+    driver: bridge

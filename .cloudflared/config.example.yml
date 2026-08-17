@@ -1,0 +1,10 @@
+# 复制为 config.yml，并替换为自己的 Tunnel 信息。
+tunnel: YOUR_TUNNEL_ID
+credentials-file: C:\path\to\YOUR_TUNNEL_ID.json
+
+ingress:
+  - hostname: h5.example.com
+    service: http://localhost:5173
+  - hostname: admin.example.com
+    service: http://localhost:5174
+  - service: http_status:404

@@ -1,0 +1,21 @@
+# 后端Dockerfile
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# 安装必要工具
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制构建产物
+COPY target/*.jar app.jar
+
+# 创建上传目录
+RUN mkdir -p /app/uploads
+
+# 暴露端口
+EXPOSE 8080
+
+# 启动命令
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]

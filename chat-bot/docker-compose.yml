@@ -1,0 +1,46 @@
+services:
+  chatbot-db:
+    image: pgvector/pgvector:pg16
+    container_name: chatbot-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-chatbot}
+      POSTGRES_USER: ${POSTGRES_USER:-chatbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chatbot123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - chatbot-db-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-chatbot} -d ${POSTGRES_DB:-chatbot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chatbot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chatbot-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: chatbot-db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-chatbot}
+      DB_USERNAME: ${POSTGRES_USER:-chatbot}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-chatbot123}
+      DASHSCOPE_BASE_URL: ${DASHSCOPE_BASE_URL:-http://host.docker.internal:8081}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      DASHSCOPE_MODEL: ${DASHSCOPE_MODEL:-qwen3.7-max}
+      DASHSCOPE_EMBEDDING_MODEL: ${DASHSCOPE_EMBEDDING_MODEL:-qwen3.7-text-embedding}
+      SERVER_PORT: 8080
+    command: ["java", "-Dcom.sun.net.ssl.checkRevocation=false", "-Djdk.security.ssl.certRevocation.enabled=false", "-jar", "app.jar"]
+    depends_on:
+      chatbot-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  chatbot-db-data:

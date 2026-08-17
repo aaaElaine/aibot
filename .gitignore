@@ -1,0 +1,61 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# Node
+node_modules/
+.npm-cache/
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Cloudflare Tunnel
+.cloudflared/*.json
+.cloudflared/config.yml
+!.cloudflared/config.example.yml
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# H2 Database - 数据持久化目录
+data/
+*.mv.db
+*.trace.db
+
+# Temp files
+*.tmp
+*.swp
+*.tmp.txt

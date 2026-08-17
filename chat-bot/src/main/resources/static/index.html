@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 智能客服 - Support Bot</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🤖</div>
+                <div class="title">Support Bot</div>
+                <div class="subtitle">AI 智能客服</div>
+            </div>
+            <div class="sidebar-actions">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <span>✨</span> 新建对话
+                </button>
+            </div>
+            <div class="conversation-list" id="conversationList">
+                <!-- 会话列表动态生成 -->
+            </div>
+            <div class="sidebar-footer">
+                <div class="mode-switch">
+                    <button class="mode-btn active" data-mode="chat">💬 客服对话</button>
+                    <button class="mode-btn" data-mode="product">📦 商品提取</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主聊天区 -->
+        <main class="chat-main">
+            <div class="chat-header">
+                <div class="chat-title" id="chatTitle">新对话</div>
+                <div class="chat-status" id="chatStatus">
+                    <span class="status-dot online"></span>
+                    <span>在线</span>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">👋</div>
+                    <div class="welcome-title">你好，我是智能客服助手</div>
+                    <div class="welcome-desc">我可以帮你解答商品信息、订单查询、售后服务等问题</div>
+                    <div class="quick-prompts">
+                        <div class="quick-title">试试这些问题：</div>
+                        <div class="prompt-list">
+                            <button class="prompt-item" data-text="如何查询我的订单？">🔍 如何查询订单？</button>
+                            <button class="prompt-item" data-text="退货政策是什么？">📋 退货政策是什么？</button>
+                            <button class="prompt-item" data-text="你们支持哪些付款方式？">💳 支持哪些付款方式？</button>
+                            <button class="prompt-item" data-text="如何联系人工客服？">☎️ 如何联系人工客服？</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品提取模式表单 -->
+            <div class="product-panel" id="productPanel" style="display:none;">
+                <div class="product-input-area">
+                    <textarea id="productInput" placeholder="输入商品描述，例如：新款iPhone15ProMax256G深空黑色售价9999元"></textarea>
+                    <button class="extract-btn" id="extractBtn">🔍 提取商品信息</button>
+                </div>
+                <div class="product-result" id="productResult"></div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="chat-input-area" id="chatInputArea">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="输入消息... (Enter 发送，Shift+Enter 换行)"
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" disabled>
+                        <span>发送</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="input-tips">
+                    <span>💡 支持流式响应，回答会逐字显示</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
